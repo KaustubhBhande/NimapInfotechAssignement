@@ -3,6 +3,9 @@ package com.OneToMany.Controller;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.OneToMany.Model.Category;
 import com.OneToMany.Model.Product;
 import com.OneToMany.Service.ProductService;
 
@@ -23,16 +28,22 @@ public class ProductController {
 	@Autowired
 	private ProductService productService;
 
-	@GetMapping("")
+	@GetMapping("/all")
 	public ResponseEntity<?> getAllProducts() {
 
 		List<Product> product = productService.getAllProducts();
 		if (product.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+		} else {
+			return ResponseEntity.ok(product);
 		}
-		else {
-		return ResponseEntity.ok(product);
-		}
+	}
+
+	@GetMapping("/")
+	public Page<Product> getCategoryWithPagination(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int pageSize) {
+		Pageable pageable = PageRequest.of(page, pageSize);
+		return productService.getAllProducts1(pageable);
 	}
 
 	@GetMapping("/{id}")
@@ -79,7 +90,7 @@ public class ProductController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
-		
+
 		List<String> errors = productService.validate(product);
 		if (!errors.isEmpty()) {
 			return ResponseEntity.badRequest().body(errors);

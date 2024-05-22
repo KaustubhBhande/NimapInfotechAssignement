@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.OneToMany.Model.Category;
@@ -14,8 +16,7 @@ import com.OneToMany.Repository.CategoryRepository;
 public class CategoryService {
 	@Autowired
 	private CategoryRepository categoryRepository;
-	
-	
+
 	public List<String> validate(Category category) {
 
 		List<String> error = new ArrayList<>();
@@ -23,14 +24,17 @@ public class CategoryService {
 		if (category.getName() == null) {
 			error.add("Name Cannot Be Empty");
 		}
-		
-		
+
 		return error;
 	}
 
+	public Page<Category> GetAllCategory1(Pageable pageable) {
+		return categoryRepository.findAll(pageable);
+	}
+
 	public List<Category> GetAllCategory() {
-	    return  (List<Category>) this.categoryRepository.findAll();
-	 
+		return (List<Category>) this.categoryRepository.findAll();
+
 	}
 
 	public Optional<Category> GetCategory(Integer id) {

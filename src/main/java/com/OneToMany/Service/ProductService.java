@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.OneToMany.Model.Product;
 import com.OneToMany.Repository.ProductRepository;
@@ -18,13 +20,17 @@ public class ProductService {
 		return list;
 	}
 
+	public Page<Product> getAllProducts1(Pageable pageable) {
+		return this.productRepository.findAll(pageable);
+	}
+
 	public Optional<Product> getProduct(Integer id) {
 		return this.productRepository.findById(id);
 	}
 
 	public Product addProduct(Product product) {
-		//get category
-		//set in product.setCategory(c)
+		// get category
+		// set in product.setCategory(c)
 		return this.productRepository.save(product);
 	}
 
@@ -55,12 +61,12 @@ public class ProductService {
 		if (product.getName() == null) {
 			error.add("Name Cannot Be Empty");
 		}
-		
-		if (product.getDescription()== null) {
+
+		if (product.getDescription() == null) {
 			error.add("Description Cannot Be Empty");
 		}
-		
+
 		return error;
-		
+
 	}
 }
